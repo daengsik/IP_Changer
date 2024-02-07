@@ -67,8 +67,8 @@ def run_gui():
 
     # LABEL #
     ui_descLabel1 = ttk.Label(tab1, text="네트워크 어댑터를 선택하고 IP 구성정보를 입력하세요.\n"
-                                          "DHCP 버튼을 누르면 자동으로 해당 어댑터를 '사용함' 으로 \n"
-                                          "변경합니다.")
+                                          "어댑터 사용유무는 선택후 확인버튼을 눌러야 반영됩니다. \n"
+                                          "DHCP 버튼은 어댑터를 자동으로 '사용함' 으로 변경합니다.")
     ui_descLabel2 = ttk.Label(tab2, text="구현중")
     ui_dnsLabel = tk.Label(ui_dnstxtFrame, text=" 기본 설정 DNS 서버", anchor="w")
     ui_adaptLabel = tk.Label(ui_txtFrame, text=" 어댑터", anchor="w")

@@ -1,3 +1,6 @@
+import locale
+
+current_locale, encoding = locale.getdefaultlocale()
 adapters = []
 adapter = None
 
