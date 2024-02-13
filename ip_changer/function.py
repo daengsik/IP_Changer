@@ -5,6 +5,18 @@ from tkinter import messagebox
 import variables
 import re
 
+# Subprocess result normalization
+def normalize_result(result):
+    result_dict = {}
+    lines = result.stdout.split('\n')
+    for line in lines:
+        match = re.match(r'\s*(.*?):\s*(.*)', line)
+        if match:
+            key, value = match.groups()
+            # 여백을 제외하고 저장
+            result_dict[key.strip()] = value.strip()
+    return result_dict
+
 # Entry 입력값 체크
 def chk_entry_data(data):
     return data.isdigit() and len(data) <= 3 or data ==""
@@ -38,7 +50,7 @@ def init_radio():
     variables.radio_var = tkinter.StringVar(value="")
     return variables.radio_var
 
-# 네트워크 어댑터 get
+# 네트워크 어댑터 리스트 get
 def get_network_adapter():
     result = subprocess.run(['netsh', 'interface', 'show', 'interface'], capture_output=True, text=True)
     output_lines = result.stdout.split("\n")
@@ -68,68 +80,41 @@ def use_Entry():
 
 # Combobox 선택 이벤트 핸들러
 def on_adapter_selected(event, selected_value):
-    variables.adapter = selected_value
-    result = subprocess.run(['netsh', 'interface', 'ipv4', 'show', 'address', variables.adapter],
-                            capture_output=True, text=True)
-    tmp = result.stdout.split()
-
-    # 여기서 시스템 언어설정을 구분하고, 정보 구분이 필요함
-    # 언어설정 확인
-    print("언어설정", variables.current_locale) #ko_KR / en_US
-    print("인코딩", variables.encoding)
-
-    # 한국어일 경우 어댑터 사용, 사용안함 여부 판단하는 구문
-    result2 = subprocess.run(['netsh', 'interface', 'show', 'interface', 'name=' + variables.adapter],
-                             capture_output=True, text=True)
-    tmp2 = re.split(r'\s{2,}', result2.stdout)
-    tmp2 = tmp2[tmp2.index('관리 상태:') + 1]
-
-    # dns 주소 가져옴
-    result3 = subprocess.run(['netsh', 'interface', 'ip', 'show', 'dns', variables.adapter],
-                             capture_output=True, text=True)
-    tmp3 = re.split(r'\s{2,}', result3.stdout)
-    tmp3 = tmp3[tmp3.index('DHCP를 통해 구성된 DNS 서버:') + 1]
-
-    #print(result3)
-
-    #Entry 초기화
+    # Entry 초기화
     init_entry()
 
+    variables.adapter = selected_value
+    result = subprocess.run(['netsh', 'interface', 'ipv4', 'show', 'address', variables.adapter], capture_output=True, text=True)
+    print(normalize_result(result))
+
+    # 어댑터 사용, 사용안함 여부 판단하는 구문
+    result2 = subprocess.run(['netsh', 'interface', 'show', 'interface', 'name=' + variables.adapter], capture_output=True, text=True)
+    print(normalize_result(result2))
+    # dns 주소 가져옴
+    result3 = subprocess.run(['netsh', 'interface', 'ip', 'show', 'dns', variables.adapter], capture_output=True, text=True)
+    print(normalize_result(result3))
+
     # 한국어 일 경우 어댑터 사용유무에 따른 Radio 버튼 선택
-    if tmp2 == "사용 안 함":
+    if list(normalize_result(result2).values())[1] == "사용 안 함":
         nouse_Entry()
         variables.radio_var.set("Off")
-    if tmp2 == "사용":
+    if list(normalize_result(result2).values())[1] == "사용":
         use_Entry()
         variables.radio_var.set("On")
 
-    try:
-        ipadd = tmp[tmp.index('IP')+2].split(".")
-        set_ipEntry(ipadd[0], ipadd[1], ipadd[2], ipadd[3])
-        #print(tmp)
+    ipadd = list(normalize_result(result).values())[1].split(".")
+    set_ipEntry(ipadd[0], ipadd[1], ipadd[2], ipadd[3])
 
-        if variables.current_locale == "en_US":
-            subnet = tmp[tmp.index('Subnet') + 4].rstrip(')').split(".")
-            set_subnetEntry(subnet[0], subnet[1], subnet[2], subnet[3])
+    subnet = list(normalize_result(result).values())[2]
+    # 영문결과 정규식 수정필요
+    subnet = re.search(r'\((마스크\s+([\d.]+))\)', subnet).group(2).split(".")
+    set_subnetEntry(subnet[0], subnet[1], subnet[2], subnet[3])
 
-            gateway = tmp[tmp.index('Default') + 2].split(".")
-            set_gatewayEntry(gateway[0], gateway[1], gateway[2], gateway[3])
+    gateway = list(normalize_result(result).values())[3].split(".")
+    set_gatewayEntry(gateway[0], gateway[1], gateway[2], gateway[3])
 
-        if variables.current_locale == "ko_KR":
-            subnet = tmp[tmp.index('서브넷') + 3].rstrip(')').split(".")
-            set_subnetEntry(subnet[0], subnet[1], subnet[2], subnet[3])
-
-            gateway = tmp[tmp.index('게이트웨이:') + 1].split(".")
-            set_gatewayEntry(gateway[0], gateway[1], gateway[2], gateway[3])
-
-            # DNS 도 가져옴
-            dns = tmp3.split(".")
-            set_dnsEntry(dns[0], dns[1], dns[2], dns[3])
-            print(dns)
-
-    # 예외발생상황 정리 필요함. MESSAGEBOX 사용으로 출력 필요함.
-    except ValueError as ve:
-        print(f"{ve}")
+    dns = list(normalize_result(result3).values())[0].split(".")
+    set_dnsEntry(dns[0], dns[1], dns[2], dns[3])
 
 # Radio 버튼 클릭 이벤트 핸들러
 def on_radio_click():
@@ -157,11 +142,6 @@ def on_DHCP_click():
     # Messagebox 필수만 남기고 정리해야됨
     except TypeError as ty:
         messagebox.showinfo("Error", f"{ty}")
-
-
-
-
-
 
 # 확인 버튼 클릭 이벤트 핸들러
 def on_apply_click():
@@ -212,18 +192,6 @@ def on_apply_click():
                                  'admin=disable'], capture_output=True, text=True)
         # Messagebox 정리필요함
         messagebox.showerror("Error", result.stdout)
-
-
-
-
-    # 설정값 확인용도
-    print(ipadd)
-    print(subnet)
-    print(gateway)
-    print(dns)
-    print(stat)
-
-
 
 # 커스텀 버튼 클릭 이벤트 핸들러 (AhnLab)
 def on_custom_click():
