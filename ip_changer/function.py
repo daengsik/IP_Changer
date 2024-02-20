@@ -82,39 +82,46 @@ def use_Entry():
 def on_adapter_selected(event, selected_value):
     # Entry 초기화
     init_entry()
+    try:
+        variables.adapter = selected_value
+        result = subprocess.run(['netsh', 'interface', 'ipv4', 'show', 'address', variables.adapter], capture_output=True, text=True)
+        print(normalize_result(result))
 
-    variables.adapter = selected_value
-    result = subprocess.run(['netsh', 'interface', 'ipv4', 'show', 'address', variables.adapter], capture_output=True, text=True)
-    print(normalize_result(result))
+        # 어댑터 사용, 사용안함 여부 판단하는 구문
+        result2 = subprocess.run(['netsh', 'interface', 'show', 'interface', 'name=' + variables.adapter], capture_output=True, text=True)
+        print(normalize_result(result2))
+        # dns 주소 가져옴
+        result3 = subprocess.run(['netsh', 'interface', 'ip', 'show', 'dns', variables.adapter], capture_output=True, text=True)
+        print(normalize_result(result3))
 
-    # 어댑터 사용, 사용안함 여부 판단하는 구문
-    result2 = subprocess.run(['netsh', 'interface', 'show', 'interface', 'name=' + variables.adapter], capture_output=True, text=True)
-    print(normalize_result(result2))
-    # dns 주소 가져옴
-    result3 = subprocess.run(['netsh', 'interface', 'ip', 'show', 'dns', variables.adapter], capture_output=True, text=True)
-    print(normalize_result(result3))
+        # 한국어 일 경우 어댑터 사용유무에 따른 Radio 버튼 선택
+        if list(normalize_result(result2).values())[1] == "사용 안 함":
+            nouse_Entry()
+            variables.radio_var.set("Off")
+        if list(normalize_result(result2).values())[1] == "사용":
+            use_Entry()
+            variables.radio_var.set("On")
+    except IndexError:
+        messagebox.showerror("Error", "invalid interface name.")
 
-    # 한국어 일 경우 어댑터 사용유무에 따른 Radio 버튼 선택
-    if list(normalize_result(result2).values())[1] == "사용 안 함":
-        nouse_Entry()
-        variables.radio_var.set("Off")
-    if list(normalize_result(result2).values())[1] == "사용":
-        use_Entry()
-        variables.radio_var.set("On")
+    try:
+        ipadd = list(normalize_result(result).values())[1].split(".")
+        set_ipEntry(ipadd[0], ipadd[1], ipadd[2], ipadd[3])
 
-    ipadd = list(normalize_result(result).values())[1].split(".")
-    set_ipEntry(ipadd[0], ipadd[1], ipadd[2], ipadd[3])
+        subnet = list(normalize_result(result).values())[2]
+        # 영문결과 정규식 수정필요
+        subnet = re.search(r'\((마스크\s+([\d.]+))\)', subnet).group(2).split(".")
+        set_subnetEntry(subnet[0], subnet[1], subnet[2], subnet[3])
 
-    subnet = list(normalize_result(result).values())[2]
-    # 영문결과 정규식 수정필요
-    subnet = re.search(r'\((마스크\s+([\d.]+))\)', subnet).group(2).split(".")
-    set_subnetEntry(subnet[0], subnet[1], subnet[2], subnet[3])
+        gateway = list(normalize_result(result).values())[3].split(".")
+        set_gatewayEntry(gateway[0], gateway[1], gateway[2], gateway[3])
 
-    gateway = list(normalize_result(result).values())[3].split(".")
-    set_gatewayEntry(gateway[0], gateway[1], gateway[2], gateway[3])
+        dns = list(normalize_result(result3).values())[0].split(".")
+        set_dnsEntry(dns[0], dns[1], dns[2], dns[3])
 
-    dns = list(normalize_result(result3).values())[0].split(".")
-    set_dnsEntry(dns[0], dns[1], dns[2], dns[3])
+    except IndexError:
+        messagebox.showerror("Error", "Failed to retrieve the IP address.")
+
 
 # Radio 버튼 클릭 이벤트 핸들러
 def on_radio_click():
