@@ -95,12 +95,13 @@ def on_adapter_selected(event, selected_value):
         print(normalize_result(result3))
 
         # 한국어 일 경우 어댑터 사용유무에 따른 Radio 버튼 선택
-        if list(normalize_result(result2).values())[1] == "사용 안 함":
+        if list(normalize_result(result2).values())[1] == "사용 안 함" or list(normalize_result(result2).values())[1] == "Disabled" :
             nouse_Entry()
             variables.radio_var.set("Off")
-        if list(normalize_result(result2).values())[1] == "사용":
+        if list(normalize_result(result2).values())[1] == "사용" or list(normalize_result(result2).values())[1] == "Enabled":
             use_Entry()
             variables.radio_var.set("On")
+
     except IndexError:
         messagebox.showerror("Error", "invalid interface name.")
 
@@ -122,6 +123,14 @@ def on_adapter_selected(event, selected_value):
     except IndexError:
         messagebox.showerror("Error", "Failed to retrieve the IP address.")
 
+    # except AttributeError:
+    #     subnet = re.search(r'\((mask\s+([\d.]+))\)', subnet).group(2).split(".")
+    #     set_subnetEntry(subnet[0], subnet[1], subnet[2], subnet[3])
+    #     gateway = list(normalize_result(result).values())[3].split(".")
+    #     set_gatewayEntry(gateway[0], gateway[1], gateway[2], gateway[3])
+
+    #     dns = list(normalize_result(result3).values())[0].split(".")
+    #     set_dnsEntry(dns[0], dns[1], dns[2], dns[3])
 
 # Radio 버튼 클릭 이벤트 핸들러
 def on_radio_click():
