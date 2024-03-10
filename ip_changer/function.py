@@ -5,6 +5,18 @@ from tkinter import messagebox
 import variables
 import re
 
+import sys
+import os
+import win32com.shell.shell as shell
+
+# run_as_admin
+# def run_as_admin():
+#     if sys.argv[-1] != 'asadmin':
+#         script = os.path.abspath(sys.argv[0])
+#         params = ' '.join([script] + sys.argv[1:] + ['asadmin'])
+#         shell.ShellExecuteEx(lpVerb='runas', lpFile=sys.executable, lpParameters=params)
+#         sys.exit(0)
+
 # Subprocess result normalization
 def normalize_result(result):
     result_dict = {}

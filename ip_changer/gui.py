@@ -12,7 +12,7 @@ window.geometry('384x405')
 #window.resizable(False, False)
 
 def run_gui():
-
+    # run_as_admin():
     # Style
     style = ttk.Style()
     style.configure("TButton", padding=1, relief="flat", width=8, borderwidth=0)
