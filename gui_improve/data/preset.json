@@ -1,0 +1,98 @@
+[
+    {
+        "name" : "Button 1",
+        "desc" : "Btn1 Descript",
+        "ip_addr" : "10.0.1.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.1.254",
+        "dns" : ""
+    },
+    {
+        "name" : "Button 2",
+        "desc" : "Btn2 Descript",
+        "ip_addr" : "10.0.2.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.2.254",
+        "dns" : ""
+    },
+    {
+        "name" : "Button 3",
+        "desc" : "Btn3 Descript",
+        "ip_addr" : "10.0.3.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.3.254",
+        "dns" : ""
+    },
+    {
+        "name" : "Button 4",
+        "desc" : "Btn4 Descript",
+        "ip_addr" : "10.0.4.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.4.254",
+        "dns" : ""
+    },
+    {
+        "name" : "Button 5",
+        "desc" : "Btn5 Descript",
+        "ip_addr" : "10.0.5.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.5.254",
+        "dns" : ""
+    },
+    {
+        "name" : "Button 6",
+        "desc" : "Btn6 Descript",
+        "ip_addr" : "10.0.6.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.6.254",
+        "dns" : ""
+    },
+    {
+        "name" : "Button 7",
+        "desc" : "Btn7 Descript",
+        "ip_addr" : "10.0.7.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.7.254",
+        "dns" : ""
+    },
+    {
+        "name" : "Button 8",
+        "desc" : "Btn8 Descript",
+        "ip_addr" : "10.0.8.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.8.254",
+        "dns" : ""
+    },
+    {
+        "name" : "Button 9",
+        "desc" : "Btn9 Descript",
+        "ip_addr" : "10.0.9.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.9.254",
+        "dns" : ""
+    },
+    {
+        "name" : "Button 10",
+        "desc" : "Btn10 Descript",
+        "ip_addr" : "10.0.10.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.10.254",
+        "dns" : ""
+    },
+    {
+        "name" : "Button 11",
+        "desc" : "Btn11 Descript",
+        "ip_addr" : "10.0.11.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.11.254",
+        "dns" : ""
+    },
+    {
+        "name" : "Button 12",
+        "desc" : "Btn12 Descript",
+        "ip_addr" : "10.0.12.1",
+        "subnet" : "255.255.255.0",
+        "gateway" : "10.0.12.254",
+        "dns" : ""
+    }
+]
