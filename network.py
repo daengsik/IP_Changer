@@ -422,16 +422,34 @@ try {{
 
 
 def apply_dhcp(adapter_name: str) -> tuple[bool, str]:
-    """어댑터를 활성화하고 IP·DNS 모두 DHCP 로 전환."""
+    """IP/DNS 를 DHCP 로 전환하고 DHCP 재협상을 강제로 트리거.
+
+    순서가 매우 중요하다 — MS 문서 명시:
+      Set-NetIPInterface -Dhcp Enabled 는 어댑터에 정적 IP 가 박혀 있으면
+      DHCP 활성 플래그만 켤 뿐 기존 정적 IP 를 자동 제거하지 않는다.
+      → 정적 IP/라우트를 **먼저** 제거하고, 그 다음에 DHCP 를 활성화해야 한다.
+
+    재협상은 `ipconfig /renew` 대신 `Restart-NetAdapter` 를 쓴다 — PowerShell
+    → native exe 의 인자 처리에서 공백/한글 어댑터명(`이더넷 3`)이 분해되어
+    /renew 가 실패하는 사례를 회피하기 위함. 어댑터 재시작은 잠깐의 네트워크
+    단절을 만들지만 DHCP discover 를 가장 확실하게 트리거한다.
+    """
     cmd = f"""
 $n = {_ps_b64_str(adapter_name)}
 try {{
     Enable-NetAdapter -Name $n -Confirm:$false -ErrorAction SilentlyContinue
-    Set-NetIPInterface -InterfaceAlias $n -Dhcp Enabled -ErrorAction Stop
+
+    # 1) 정적 IP/라우트 제거 — Set-NetIPInterface 보다 반드시 먼저
     Remove-NetIPAddress -InterfaceAlias $n -AddressFamily IPv4 -Confirm:$false -ErrorAction SilentlyContinue
     Remove-NetRoute -InterfaceAlias $n -AddressFamily IPv4 -Confirm:$false -ErrorAction SilentlyContinue
+
+    # 2) DHCP 모드 활성 + DNS 자동
+    Set-NetIPInterface -InterfaceAlias $n -Dhcp Enabled -ErrorAction Stop
     Set-DnsClientServerAddress -InterfaceAlias $n -ResetServerAddresses -ErrorAction SilentlyContinue
-    Start-Process -FilePath 'ipconfig.exe' -ArgumentList '/renew', $n -WindowStyle Hidden -Wait -ErrorAction SilentlyContinue | Out-Null
+
+    # 3) DHCP discover 트리거 — 어댑터 재시작이 가장 확실
+    Restart-NetAdapter -Name $n -Confirm:$false -ErrorAction SilentlyContinue
+    Start-Sleep -Milliseconds 800
     Write-Output 'OK'
 }} catch {{
     Write-Output ('ERR: ' + $_.Exception.Message)

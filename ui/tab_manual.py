@@ -417,8 +417,12 @@ class ManualTab:
                 "before": network.ipconfig_to_dict(before),
                 "after": {"is_dhcp": True},
             })
-            self.window.after(0, lambda: self._set_status("DHCP가 적용되었습니다."))
-            self.window.after(150, self.refresh)
+            self.window.after(0, lambda: self._set_status("DHCP가 적용되었습니다. (IP 협상 대기 중...)"))
+            # Restart-NetAdapter 직후엔 어댑터가 막 일어난 상태라 DHCP 응답이 아직
+            # 안 왔을 수 있다. 1차 1.2s 후 갱신, 2차 3s 후 한 번 더 — 그래도 IP 가
+            # 안 들어오면 사용자 환경에 DHCP 서버가 없을 가능성이 크다.
+            self.window.after(1200, self.refresh)
+            self.window.after(3000, self.refresh)
         else:
             self.window.after(
                 0, lambda: Messagebox.show_error(f"DHCP 설정 실패:\n{msg}", "오류")
