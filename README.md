@@ -7,7 +7,12 @@ Windows 11 이더넷 어댑터 IP 변경 GUI. ttkbootstrap 기반 단일 윈도�
 
 
 
-## 빌드
+## 다운로드
+[최신 버전 다운로드](https://github.com/daengsik/IP_Changer/releases/latest)
+
+
+
+## 직접 빌드
 
 ```powershell
 ./build.bat
