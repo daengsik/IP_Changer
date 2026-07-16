@@ -1,4 +1,4 @@
-# IP Changer v2.2
+# IP Changer v2.3
 
 Windows 11 이더넷 어댑터 IP 변경 GUI. ttkbootstrap 기반 단일 윈도우 + 12 슬롯 프리셋 + **트레이 상주(위젯) 모드**.
 

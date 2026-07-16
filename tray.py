@@ -179,7 +179,7 @@ class TrayController:
 
     @staticmethod
     def _preset_label(idx: int, p: dict) -> str:
-        name = p.get("name") or p.get("desc") or f"프리셋 {idx + 1}"
+        name = p.get("name") or f"프리셋 {idx + 1}"
         ip = p.get("ip_addr") or "(비어 있음)"
         return f"{idx + 1}. {name} — {ip}"
 

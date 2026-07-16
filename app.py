@@ -176,8 +176,6 @@ class IPChangerApp:
         theme_box = ttk.Frame(header)
         theme_box.pack(side=RIGHT)
 
-        ttk.Label(theme_box, text="테마", style="Caption.TLabel").pack(side=LEFT, padx=(0, 6))
-
         style = ttk.Style()
         theme_names = style.theme_names()
         self.theme_cbo = ttk.Combobox(
@@ -207,7 +205,7 @@ class IPChangerApp:
         footer = ttk.Frame(root)
         footer.pack(fill=X, pady=(8, 0))
         ttk.Label(
-            footer, text="made by daengsik  v2.2",
+            footer, text="made by daengsik  v2.3",
             style="Footer.TLabel",
             bootstyle=SECONDARY,
         ).pack(side=LEFT)

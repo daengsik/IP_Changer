@@ -25,7 +25,6 @@ from network import IPConfig
 _IP_FIELDS = {"ip_addr", "subnet", "gateway", "dns"}
 _LABELS = [
     ("이름",       "name"),
-    ("설명",       "desc"),
     ("IP 주소",    "ip_addr"),
     ("서브넷",     "subnet"),
     ("게이트웨이", "gateway"),

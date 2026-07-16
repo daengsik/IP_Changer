@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import tkinter.font as tkfont
 import ttkbootstrap as ttk
+from ttkbootstrap.style import Colors
 
 
 # 폰트 토큰 — 포인트 단위 (DPI 자동 환산)
@@ -63,13 +64,45 @@ def register_styles(style: ttk.Style | None = None) -> None:
                     foreground=style.colors.secondary,
                     font=(fam, FONT_CAPTION_SIZE, "bold"))
 
-    # 큰 프리셋 버튼 — 두 줄 텍스트(이름+IP)에 좀 더 여유있는 패딩
-    style.configure("Preset.TButton",
-                    font=(fam, FONT_BODY_SIZE),
-                    padding=(10, 14))
-    style.configure("PresetActive.TButton",
+    # 프리셋 카드(이름+IP 두 줄, 각각 다른 폰트 크기) — Frame + Label 조합이라
+    # 버튼과 달리 텍스트 길이가 카드 크기에 영향을 주지 않는다.
+    # 기본 배경은 테마 primary 색(예전 ttk.Button DEFAULT 와 동일한 느낌),
+    # 현재 적용된 프리셋만 secondary 색으로 구분한다.
+    base_bg = style.colors.primary
+    base_fg = style.colors.get_foreground("primary")
+    active_bg = style.colors.secondary
+    active_fg = style.colors.get_foreground("secondary")
+    hover_bg = Colors.make_transparent(0.85, base_bg, style.colors.bg)
+
+    style.configure("PresetCard.TFrame",
+                    relief="raised", borderwidth=1,
+                    background=base_bg)
+    style.configure("PresetCardActive.TFrame",
+                    relief="raised", borderwidth=2,
+                    background=active_bg)
+    style.configure("PresetCardHover.TFrame",
+                    relief="raised", borderwidth=1,
+                    background=hover_bg)
+
+    style.configure("PresetCardName.TLabel",
                     font=(fam, FONT_BODY_SIZE, "bold"),
-                    padding=(10, 14))
+                    background=base_bg, foreground=base_fg)
+    style.configure("PresetCardNameActive.TLabel",
+                    font=(fam, FONT_BODY_SIZE, "bold"),
+                    background=active_bg, foreground=active_fg)
+    style.configure("PresetCardNameHover.TLabel",
+                    font=(fam, FONT_BODY_SIZE, "bold"),
+                    background=hover_bg, foreground=base_fg)
+
+    style.configure("PresetCardIP.TLabel",
+                    font=("Consolas", FONT_FOOTER_SIZE),
+                    background=base_bg, foreground=base_fg)
+    style.configure("PresetCardIPActive.TLabel",
+                    font=("Consolas", FONT_FOOTER_SIZE),
+                    background=active_bg, foreground=active_fg)
+    style.configure("PresetCardIPHover.TLabel",
+                    font=("Consolas", FONT_FOOTER_SIZE),
+                    background=hover_bg, foreground=base_fg)
 
 
 def status_badge_style(status: str) -> str:

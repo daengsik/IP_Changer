@@ -53,7 +53,6 @@ def save_config(data: dict) -> None:
 DEFAULT_PRESETS: list[dict] = [
     {
         "name": f"프리셋 {i + 1}",
-        "desc": f"Preset {i + 1}",
         "ip_addr": f"192.168.{i + 1}.100",
         "subnet": "255.255.255.0",
         "gateway": f"192.168.{i + 1}.1",
@@ -62,7 +61,7 @@ DEFAULT_PRESETS: list[dict] = [
     for i in range(_PRESET_COUNT)
 ]
 
-_REQUIRED_KEYS = {"name", "desc", "ip_addr", "subnet", "gateway", "dns"}
+_REQUIRED_KEYS = {"name", "ip_addr", "subnet", "gateway", "dns"}
 
 # 메모리 캐시 — UI 가 빈번하게 load_presets 를 호출하므로 디스크 I/O 를 줄인다.
 _cache_lock = threading.Lock()
@@ -89,7 +88,6 @@ def _normalize(item: dict) -> dict:
     """누락된 키를 기본값으로 채워 일관된 스키마를 보장."""
     return {
         "name":    str(item.get("name") or "").strip(),
-        "desc":    str(item.get("desc") or "").strip(),
         "ip_addr": str(item.get("ip_addr") or "").strip(),
         "subnet":  str(item.get("subnet") or "").strip(),
         "gateway": str(item.get("gateway") or "").strip(),
